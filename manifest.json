@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "spanish-highlight-to-translate",
+  "version": "1.0",
+
+  "description": "Gives translation info when a Spanish phrase is highlighted",
+
+  "permissions": [
+      "storage",
+      "webRequest",
+      "https://api.openai.com/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["main.js"]
+    }],
+
+  "web_accessible_resources": [
+    "library/*"
+  ]
+}
