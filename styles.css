@@ -1,0 +1,35 @@
+.SpanishTranslateOnHighlight_language_selector {
+    width: 100%;
+    text-align: center;
+    border: solid;
+    padding-top: 2.5%;
+    padding-bottom: 2.5%;
+    cursor: pointer;
+}
+
+.SpanishTranslateOnHighlight_lang_content {
+    flex-direction: column;
+    justify-content: center;    
+    padding-bottom: 2.5%;
+    padding-top: 2.5%;
+    height: 100%;
+    width: 100%;    
+    text-align: center;    
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    overflow-y:  scroll;
+}
+
+.SpanishTranslateOnHighlight_text_div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+.SpanishTranslateOnHighlight_phrase_span {
+    /* Default to blue underline, is changed to red */
+    text-decoration: underline blue 0.175rem;
+}

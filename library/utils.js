@@ -5,6 +5,6 @@ export function debounce(func){
     clearTimeout(timer);
     timer = setTimeout(() => {
       func.apply(this, args)
-    }, 250);
+    }, 1000);
   };
 }

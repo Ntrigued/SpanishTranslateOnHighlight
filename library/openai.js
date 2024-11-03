@@ -37,14 +37,17 @@ export async function construct_OpenAI() {
 
 const PROMPTS = {
     IS_THIS_SPANISH: "Respond only \"Y\" or \"N\".\nIs the following written in Spanish?:\n\n",
+    
+    // Spanish phrase taken from https://axxon.com.ar/rev/2021/09/mas-alla-vaquerizas-sebastian-zaldua/
+    PARSE_INTO_PHRASES: "Respond with the parsing of this spanish content into phrases by function, such that the meaning of each phrase matches the original content. DO NOT PUT ANYTHING ELSE IN YOUR RESPONSE For example, if I send you \"Papá me obligó a; acompañarlo, diciéndome no sé qué de la familia, que la abuela esto o aquello.\", you would responde [Papá§ me obligó a§ acompañarlo,§ diciéndome§ no sé qué de la familia,§ que la abuela esto o aquello.]\n\n",
 
-    PARSE_INTO_PHRASES: "Respond with the parsing of this spanish content into phrases, such that the meaning of each phrase matches the original content. DO NOT PUT ANYTHING ELSE IN YOUR RESPONSE For example, if I send you \"me llamo a la casa roja despues de el partido\", you would responde [me llamo a; la casa roja; despues de; el partido]\n\n",
+    EXTRACT_VERBS: "Respond with a list only of verbs in the following spanish content. If there are no verbs, simply respond with \"[]\". Do not have anything else in your response. Ex. ¿Pero ahora el astrobiólogo Milán Cirkovic y sus colegas afirman que han encontrado un error en este razonamiento.? -> [afirman§ han§ encontrado]\n\n",
 
-    EXTRACT_VERBS: "Respond with a list only of verbs in the following spanish content. If there are no verbs, simply respond with \"[]\". Do not have anything else in your response. Ex. ¿Pero ahora el astrobiólogo Milán Cirkovic y sus colegas afirman que han encontrado un error en este razonamiento.? -> [afirman; han; encontrado]\n\n",
+    TRANSLATE_SPANISH: "Respond with just a list of translations and nothing else. Ex.: [this is the first translation§ this is another translation§ this also is a translation]\nWhat are the possible translations of the following Spanish content:\n\n",
+ 
+    TRANSLATE_SPANISH_PHRASE: "Respond with just the translation from Spanish in English, AND NOTHING ELSE:\n\n",
 
-    TRANSLATE_PHRASE: "Respond with just a list of translations and nothing else. Ex.: [this is the first translation; this is another translation; this also is a translation]\nWhat are the possible translations of the following Spanish content:\n\n",
-
-    IS_THIS_SPANISH_AND_TRANSLATE_COMBINED: "Respond with just a list of translations and nothing else. Ex.: [this is the first translation; this is another translation; this also is a translation]\nIf the text is not in Spanish, just reply \"N\". Do not put anything besides the \"N\"\nWhat are the possible translations of the following Spanish content:\n\n"
+    IS_THIS_SPANISH_AND_TRANSLATE_COMBINED: "Respond with just a list of translations and nothing else. Ex.: [this is the first translation§ this is another translation§ this also is a translation]\nIf the text is not in Spanish, just reply \"N\". Do not put anything besides the \"N\"\nWhat are the possible translations of the following Spanish content:\n\n"
 };
 
 export class OpenAI {
@@ -57,19 +60,21 @@ export class OpenAI {
     }
 
     parse_message(msg_text) {
+        console.log("Parsing: ", msg_text);
         if(msg_text.replace(' ', '') == "[]") return [];
 
-        if(msg_text.length < 3 ||
-            msg_text[0] != '[' || msg_text[msg_text.length - 1] != ']' ||
-            msg_text.split(';').length == 0)
-        {
+        // Sometimes the API doesn't return square brackets, so make them optional
+        if(msg_text[0] == '[' && msg_text[msg_text.length - 1] == ']') {
+            msg_text = msg_text.substr(1, msg_text.length - 2);
+        }
+
+        if(msg_text.length == 0 || msg_text.split('§').length == 0) {
             let msg_err = new Error();
             msg_err.data = {"error": "message is malformed", "message": msg_text};
             throw msg_err;
         }
 
-        msg_text = msg_text.substr(1, msg_text.length - 2);
-        const items = msg_text.split(';');
+        const items = msg_text.split('§');
         for(const item of items) {
             if(item.length == 0) {
                 let item_err = new Error();
@@ -122,28 +127,38 @@ export class OpenAI {
         return false;
     }
  
+    async translate_phrase(phrase_text) {
+        phrase_text = phrase_text.trim();
+        if(phrase_text == '') {
+            return "";
+        }
+
+        const translated_phrase = await this.send_prompt(PROMPTS.TRANSLATE_SPANISH_PHRASE + phrase_text);
+        return translated_phrase;
+    }
+
     async get_translation_info(text) {
         const translation_info = {};
 
-        text = text.trim();
+        text = text.trim().replaceAll("\n", "");
         try {
             let phrases_promise = null;
             if(/\s/g.test(text)) {
-                //phrases_promise = this.send_prompt(PROMPTS.PARSE_INTO_PHRASES + " " + text);
+                phrases_promise = this.send_prompt(PROMPTS.PARSE_INTO_PHRASES + " " + text);
             } else {
                 translation_info['phrases'] = [text];
             }
-            let translation_promise = await this.send_prompt(PROMPTS.TRANSLATE_PHRASE + " " + text);
+            let translation_promise = await this.send_prompt(PROMPTS.TRANSLATE_SPANISH + " " + text);
             //let verbs_promise = this.send_prompt(PROMPTS.EXTRACT_VERBS + " " + text);
 
             translation_info['translations'] = this.parse_message(await translation_promise);
-            //if(phrases_promise !== null) translation_info['phrases'] = this.parse_message(await phrases_promise);
+            if(phrases_promise !== null) translation_info['phrases'] = this.parse_message(await phrases_promise);
             //translation_info['verbs'] = this.parse_message(await verbs_promise);
 
             console.log("Highlighted phrase: " + text);
             console.log("Translation: " + translation_info['translations'][0]);
             console.log("All  Translations: " + translation_info['translations']);
-            //console.log('phrases', translation_info['phrases']);
+            console.log('phrases', translation_info['phrases']);
             //console.log('verbs: ', translation_info['verbs']); 
 
             return translation_info;
@@ -169,18 +184,18 @@ export class OpenAI {
             } else {
                 translation_info['phrases'] = [text];
             }
-            //let translation_promise = await this.send_prompt(PROMPTS.TRANSLATE_PHRASE + " " + text);
-            let verbs_promise = this.send_prompt(PROMPTS.EXTRACT_VERBS + " " + text);
+            //let translation_promise = await this.send_prompt(PROMPTS.TRANSLATE_SPANISH + " " + text);
+            // let verbs_promise = this.send_prompt(PROMPTS.EXTRACT_VERBS + " " + text);
 
             //translation_info['translations'] = this.parse_message(await translation_promise);
             if(phrases_promise !== null) translation_info['phrases'] = this.parse_message(await phrases_promise);
-            translation_info['verbs'] = this.parse_message(await verbs_promise);
+            // translation_info['verbs'] = this.parse_message(await verbs_promise);
 
             console.log("Highlighted phrase: " + text);
             console.log("Translation: " + translation_info['translations'][0]);
             console.log("All  Translations: " + translation_info['translations']);
             console.log('phrases', translation_info['phrases']);
-            console.log('verbs: ', translation_info['verbs']); 
+            // console.log('verbs: ', translation_info['verbs']); 
 
             return translation_info;
         } catch(e) {
