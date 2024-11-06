@@ -1,24 +1,39 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "spanish-highlight-to-translate",
   "version": "1.0",
-
   "description": "Gives translation info when a Spanish phrase is highlighted",
-
   "permissions": [
-      "storage",
-      "webRequest",
+      "storage"
+  ],
+  "host_permissions": [
       "https://api.openai.com/*"
   ],
-
   "content_scripts": [
-    {
-      "matches": ["*://*/*"],
-      "css": ["styles.css"],
-      "js": ["main.js"]
-    }],
-
+      {
+          "matches": [
+              "*://*/*"
+          ],
+          "css": [
+              "styles.css"
+          ],
+          "js": [
+              "main.js"
+          ]
+      }
+  ],
   "web_accessible_resources": [
-    "library/*"
-  ]
+      {
+          "resources": [
+              "library/*"
+          ],
+          "matches": [
+              "<all_urls>"
+          ]
+      }
+  ],
+  "action": {
+      "default_popup": "popup.html",
+      "default_icon": "icon.png"
+  }
 }

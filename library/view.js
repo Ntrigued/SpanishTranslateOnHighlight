@@ -3,44 +3,19 @@ function display_content(html_elements) {
 
     const outer_div = document.createElement("div");
     outer_div.id = "SpanishTranslateOnHighlight_outer_translation_div";
-    outer_div.style.zIndex = "999";
-    outer_div.style.position = 'fixed';
-    outer_div.style.display = "flex";
-    outer_div.style.flexDirection = "column";
-    outer_div.style.top = "5vh";
-    outer_div.style.right = "25vw";
-    outer_div.style.width = "50vw";
-    outer_div.style.height = "33vh";
-    outer_div.style.border = "thin solid";
-    outer_div.style.backgroundColor = "white";
-    outer_div.style.color = "black";
-    outer_div.style.userSelect = "none";
 
     const content_div = document.createElement('div');
-    content_div.style.display = "flex";
-    content_div.style.flexDirection = "column";
-    content_div.style.alignItems = "center";
-    content_div.style.height = "75%";
-    content_div.style.fontSize = "1.25em";
+    content_div.id = "SpanishTranslateOnHighlight_outer_content_div";
 
     html_elements.forEach((elem) => {
         content_div.appendChild(elem);
     });
 
     const controls_div = document.createElement('div');
-    controls_div.style.display = "flex";
-    controls_div.style.justifyContent = "end";
-    controls_div.style.height = "25%";
+    controls_div.id = "SpanishTranslateOnHighlight_controls_div";
     const exit_btn = document.createElement('input');
+    exit_btn.id = "SpanishTranslateOnHighlight_exit_btn";
     exit_btn.value = 'Close';
-    exit_btn.style.fontSize = "1.25em";
-    exit_btn.style.backgroundColor = "#ff595e";
-    exit_btn.style.border = "0";
-    exit_btn.style.borderRadius = "0";
-    exit_btn.style.margin = "0";
-    exit_btn.style.cursor = "pointer";
-    exit_btn.style.textAlign = "center";
-    exit_btn.style.width = "100%";
     exit_btn.onclick = () => document.getElementById('SpanishTranslateOnHighlight_outer_translation_div').remove();
     controls_div.appendChild(exit_btn);
 
@@ -60,9 +35,7 @@ export function display_translation_info(translation_info, openai) {
     const english_translation = translation_info['translations'][0]
 
     const lang_selector_div = document.createElement('div');
-    lang_selector_div.style.display = "flex";
-    lang_selector_div.style.width = "100%";
-
+    lang_selector_div.id = "SpanishTranslateOnHighlight_lang_selector_div";
 
     const english_selector = document.createElement('div');
     english_selector.classList.add("SpanishTranslateOnHighlight_language_selector");
@@ -85,17 +58,6 @@ export function display_translation_info(translation_info, openai) {
         document.getElementById("SpanishTranslateOnHighlight_english_translation_info").style.display = "none";
         document.getElementById("SpanishTranslateOnHighlight_spanish_translation_info").style.display = "flex";
     };
-
-    /*
-    [english_selector, spanish_selector].forEach(elem => {
-        elem.style.width = '100%';
-        elem.style.textAlign = "center";
-        elem.style.border = "solid";
-        elem.style.paddingTop = "2.5%";
-        elem.style.paddingBottom = "2.5%";
-        elem.style.cursor = "pointer";
-    });
-    */
 
     lang_selector_div.appendChild(english_selector);
     lang_selector_div.appendChild(spanish_selector);

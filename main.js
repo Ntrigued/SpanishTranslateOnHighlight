@@ -1,12 +1,12 @@
 (async () => {
     console.log("starting script");
-    const utils_src = chrome.extension.getURL('library/utils.js');
+    const utils_src = chrome.runtime.getURL('library/utils.js');
     const utils = await import(utils_src);
 
-    const openai_src = chrome.extension.getURL('library/openai.js');
+    const openai_src = chrome.runtime.getURL('library/openai.js');
     const openai_lib = await import(openai_src);
 
-    const view_src = chrome.extension.getURL('library/view.js');
+    const view_src = chrome.runtime.getURL('library/view.js');
     view = await import(view_src);
 
     const openai = await openai_lib.construct_OpenAI();

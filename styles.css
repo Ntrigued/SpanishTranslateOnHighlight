@@ -1,7 +1,56 @@
+#SpanishTranslateOnHighlight_outer_translation_div {
+    z-index: 999;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    top: 5vh;
+    right: 25vw;
+    width: 50vw;
+    height: 33vh;
+    border: thin solid;
+    background-color: white;
+    color: black;
+    user-select: none;
+}
+
+#SpanishTranslateOnHighlight_outer_content_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 75%;
+    font-size: 1.25em;
+}
+
+#SpanishTranslateOnHighlight_controls_div {
+    display: flex;
+    justify-content: end;
+    height: 25%;
+}
+
+#SpanishTranslateOnHighlight_exit_btn {
+    font-size: 1.25em;
+    background-color: #ff7a7a;
+    border: 0;
+    border-radius: 0;
+    margin: 0;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+}
+
+#SpanishTranslateOnHighlight_exit_btn:hover {
+    background-color: #ff6363;
+}
+
+#SpanishTranslateOnHighlight_lang_selector_div {
+    display: flex;
+    width: 100%;
+}
+
 .SpanishTranslateOnHighlight_language_selector {
     width: 100%;
     text-align: center;
-    border: solid;
+    border: solid thin;
     padding-top: 2.5%;
     padding-bottom: 2.5%;
     cursor: pointer;
