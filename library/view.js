@@ -39,22 +39,30 @@ export function display_translation_info(translation_info, openai) {
 
     const english_selector = document.createElement('div');
     english_selector.classList.add("SpanishTranslateOnHighlight_language_selector");
+    english_selector.classList.add('SpanishTranslateOnHighlight_selected_language');
     english_selector.id = "SpanishTranslateOnHighlight_english_selector_div";
     english_selector.appendChild( document.createTextNode('English') );
     const spanish_selector = document.createElement('div');
     spanish_selector.id = "SpanishTranslateOnHighlight_spanish_selector_div";
     spanish_selector.classList.add("SpanishTranslateOnHighlight_language_selector");
     spanish_selector.appendChild( document.createTextNode('Spanish') );
-    english_selector.onclick = () => { 
-        if(english_selector) english_selector.style.backgroundColor = "lightgray";
-        if(spanish_selector) spanish_selector.style.backgroundColor = "white";
+    english_selector.onclick = () => {
+        if(english_selector) {
+            english_selector.classList.add('SpanishTranslateOnHighlight_selected_language');
+        }
+        if(spanish_selector) {
+            spanish_selector.classList.remove('SpanishTranslateOnHighlight_selected_language');
+        }
         document.getElementById("SpanishTranslateOnHighlight_english_translation_info").style.display = "flex";
         document.getElementById("SpanishTranslateOnHighlight_spanish_translation_info").style.display = "none";
     };
-    english_selector.style.backgroundColor = "lightgray";``
     spanish_selector.onclick = () => { 
-        if(spanish_selector) spanish_selector.style.backgroundColor = "lightgray";
-        if(english_selector) english_selector.style.backgroundColor = "white";
+        if(spanish_selector) {
+            spanish_selector.classList.add('SpanishTranslateOnHighlight_selected_language');
+        }
+        if(english_selector) {
+            english_selector.classList.remove('SpanishTranslateOnHighlight_selected_language');
+        }
         document.getElementById("SpanishTranslateOnHighlight_english_translation_info").style.display = "none";
         document.getElementById("SpanishTranslateOnHighlight_spanish_translation_info").style.display = "flex";
     };

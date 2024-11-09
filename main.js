@@ -12,6 +12,16 @@
     const openai = await openai_lib.construct_OpenAI();
 
     const translate_and_view_debounced = utils.debounce(async (selected_text) => {
+        const text_length = selected_text.trim().length;
+        if(text_length > 250) {
+            const overflow_amount = text_length - 250;
+            const length_msg = "Highlighted text is too long for translation. It is " + overflow_amount.toString() + 
+            " characters more than the maximum of 250 characters.";
+            console.log(length_msg);
+            view.display_text(length_msg);
+            return;
+        }
+
         view.display_text("Loading translation...");
         console.clear();
         const translation_info = await openai.translate_if_spanish(selected_text);
@@ -35,16 +45,7 @@
         try {
             const selected_text = document.getSelection().toString();
             if(selected_text.trim() !== "") {
-                const text_length = selected_text.trim().length;
-                if(text_length > 250) {
-                    const overflow_amount = text_length - 250;
-                    const length_msg = "Highlighted text is too long for translation. It is " + overflow_amount.toString() + 
-                    " characters more than the maximum of 250 characters.";
-                    console.log(length_msg);
-                    view.display_text(length_msg);
-                } else {
-                    translate_and_view_debounced(selected_text);
-                }
+                translate_and_view_debounced(selected_text);
             } else {
                 console.debug("removing modal becuase selected text is blank");
                 view.remove_modal();
@@ -68,18 +69,20 @@
                 const spanish_selector = document.getElementById("SpanishTranslateOnHighlight_spanish_selector_div");
                 console.log("english div: ", english_div);
                 console.log("spanish_div: ", spanish_div);
-                if(spanish_div && spanish_div.style.display == "flex") {
-                    english_selector.style.backgroundColor = "lightgray";
-                    spanish_selector.style.backgroundColor = "white";
-                    english_div.style.display = "flex";
-                    spanish_div.style.display = "none";
-                    e.preventDefault();
-                } else if(english_div && english_div.style.display == "flex") {
-                    english_selector.style.backgroundColor = "white";
-                    spanish_selector.style.backgroundColor = "lightgray";
-                    english_div.style.display = "none";
-                    spanish_div.style.display = "flex";
-                    e.preventDefault();
+                if(spanish_selector && english_selector && english_div && spanish_div) {
+                    if(spanish_selector.classList.contains("SpanishTranslateOnHighlight_selected_language")) {
+                        english_selector.classList.add("SpanishTranslateOnHighlight_selected_language");
+                        english_div.style.display = "flex";
+                        spanish_selector.classList.remove("SpanishTranslateOnHighlight_selected_language");
+                        spanish_div.style.display = "none";
+                        e.preventDefault();
+                    } else if(english_selector.classList.contains("SpanishTranslateOnHighlight_selected_language")) {
+                        english_selector.classList.remove("SpanishTranslateOnHighlight_selected_language");
+                        english_div.style.display = "none";
+                        spanish_selector.classList.add("SpanishTranslateOnHighlight_selected_language");
+                        spanish_div.style.display = "flex";
+                        e.preventDefault();
+                    }
                 }
             }
         }
