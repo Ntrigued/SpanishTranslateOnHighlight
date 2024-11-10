@@ -1,7 +1,9 @@
+import * as dev_logger from "./dev_logger.js";
+
 async function get_valid_key() {
     let OPENAI_API_KEY = await new Promise((resolve, reject) => {
         chrome.storage.local.get("OPENAI_API_KEY", (result) => {
-            console.log(result);
+            dev_logger.debug("Retrieved local storage for OPENAI_API_KEY: ", result);
             if('OPENAI_API_KEY' in result) resolve(result['OPENAI_API_KEY']);
             else resolve(null);
         });
@@ -11,8 +13,10 @@ async function get_valid_key() {
         OPENAI_API_KEY = prompt("Enter OPENAI API KEY to enable translation: ");
     }
     while(! await verify_key_works(OPENAI_API_KEY)) {
+        dev_logger.warn("Provised OpenAI API key failed verification, prompting again...");
         OPENAI_API_KEY = prompt("Key failed to authenticate. Enter OPENAI API KEY to enable translation: ");            
     }
+    dev_logger.info("OPENAI API KEY passed verification");
     
     await new Promise((resolve, reject) => {
         chrome.storage.local.set({"OPENAI_API_KEY": OPENAI_API_KEY}, () => resolve());
@@ -55,12 +59,10 @@ export class OpenAI {
     constructor(key) {
         this.chat_url = "https://api.openai.com/v1/chat/completions";
         this.key = key;
-
-        // this.get_translation_info("como se dice");
     }
 
     parse_message(msg_text) {
-        console.log("Parsing: ", msg_text);
+        dev_logger.debug("Parsing the following ChatGPT response: ", msg_text);
         if(msg_text.replace(' ', '') == "[]") return [];
 
         // Sometimes the API doesn't return square brackets, so make them optional
@@ -69,15 +71,16 @@ export class OpenAI {
         }
 
         if(msg_text.length == 0 || msg_text.split('§').length == 0) {
+            dev_logger.error("Message could not be parsed - not enough items to split");
             let msg_err = new Error();
             msg_err.data = {"error": "message is malformed", "message": msg_text};
             throw msg_err;
         }
 
-        console.log("pre-split", msg_text);
         const items = msg_text.split('§');
         for(const item of items) {
             if(item.length == 0) {
+                dev_logger.error("Message could not be parsed - one of the split items is blank");
                 let item_err = new Error();
                 item_err.data = {"error": "message is malformed", "message": msg_text};
                 throw item_err;
@@ -88,6 +91,7 @@ export class OpenAI {
     }
 
     async send_prompt(prompt) {
+        dev_logger.debug("Sending following prompt to CHatGPT: ", prompt);
         const resp = await fetch(this.chat_url, {
             method: "POST",
             headers: {
@@ -102,6 +106,7 @@ export class OpenAI {
                     }]
                 }),
             }).then((resp) => resp.json());
+        dev_logger.debug("Received response from ChatGPT: ", resp);
 
         if('choices' in resp && resp['choices'].length != 0) {
             if('message' in resp['choices'][0] && 'content' in resp['choices'][0]['message'] &&
@@ -112,9 +117,9 @@ export class OpenAI {
         }
 
         if('error' in resp) {
-            console.error("There was an error communication with OpenAI: " + resp["error"]);
+            dev_logger.error("There was an error communicating with OpenAI: " + resp["error"]);
         } else {
-            console.error("There was an error communication with OpenAI: ", resp);
+            dev_logger.error("There was an error communicating with OpenAI: ", resp);
         }
         let e = new Error();
         e.data = resp;
@@ -150,7 +155,6 @@ export class OpenAI {
                 translation_info['phrases'] = [text];
             }
             let translation_promise = await this.send_prompt(PROMPTS.TRANSLATE_SPANISH + " " + text);
-            //let verbs_promise = this.send_prompt(PROMPTS.EXTRACT_VERBS + " " + text);
 
             translation_info['translations'] = this.parse_message(await translation_promise);
             if(phrases_promise !== null) {
@@ -160,18 +164,16 @@ export class OpenAI {
                     translation_info['phrases'] = text.split(" ");
                 }
             }
-            //translation_info['verbs'] = this.parse_message(await verbs_promise);
 
-            console.log("Highlighted phrase: " + text);
-            console.log("Translation: " + translation_info['translations'][0]);
-            console.log("All  Translations: " + translation_info['translations']);
-            console.log('phrases', translation_info['phrases']);
-            //console.log('verbs: ', translation_info['verbs']); 
+            dev_logger.log("Highlighted phrase: " + text);
+            dev_logger.debug("All  Translations: " + translation_info['translations']);
+            dev_logger.log("Translation: " + translation_info['translations'][0]);
+            dev_logger.log('phrases', translation_info['phrases']);
 
             return translation_info;
         } catch(e) {
-            if(!('data' in e)) e.data = null;
-            console.error(e, e.data);
+            if('data' in e) dev_logger.error(e, e.data);
+            else dev_logger.error(e);
 
             throw e;
         }
@@ -191,10 +193,7 @@ export class OpenAI {
             } else {
                 translation_info['phrases'] = [text];
             }
-            //let translation_promise = await this.send_prompt(PROMPTS.TRANSLATE_SPANISH + " " + text);
-            // let verbs_promise = this.send_prompt(PROMPTS.EXTRACT_VERBS + " " + text);
 
-            //translation_info['translations'] = this.parse_message(await translation_promise);
             if(phrases_promise !== null) {
                 try {
                     translation_info['phrases'] = this.parse_message(await phrases_promise);
@@ -202,18 +201,16 @@ export class OpenAI {
                     translation_info['phrases'] = text.split(" ");
                 }
             }
-            // translation_info['verbs'] = this.parse_message(await verbs_promise);
 
-            console.log("Highlighted phrase: " + text);
-            console.log("Translation: " + translation_info['translations'][0]);
-            console.log("All  Translations: " + translation_info['translations']);
-            console.log('phrases', translation_info['phrases']);
-            // console.log('verbs: ', translation_info['verbs']); 
+            dev_logger.log("Highlighted phrase: " + text);
+            dev_logger.debug("All  Translations: " + translation_info['translations']);
+            dev_logger.log("Translation: " + translation_info['translations'][0]);
+            dev_logger.log('phrases', translation_info['phrases']);
 
             return translation_info;
         } catch(e) {
-            if(!('data' in e)) e.data = null;
-            console.error(e, e.data);
+            if('data' in e) dev_logger.error(e, e.data);
+            else dev_logger.error(e);
 
             throw e;
         }

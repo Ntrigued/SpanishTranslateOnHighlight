@@ -48,7 +48,7 @@
 }
 
 .SpanishTranslateOnHighlight_language_selector {
-    background-color: lightgray;
+    background-color: white;
     width: 100%;
     text-align: center;
     border: solid thin;
@@ -57,16 +57,16 @@
     cursor: pointer;
 }
 .SpanishTranslateOnHighlight_language_selector.SpanishTranslateOnHighlight_selected_language {
-    background-color: white;
+    background-color: lightgray;
 }
 
 .SpanishTranslateOnHighlight_language_selector:not(.SpanishTranslateOnHighlight_selected_language):hover {
     /* language selector div, when not selected but hovered over */
-    background-color: #bababa;
+    background-color: #ededed;
 }
 .SpanishTranslateOnHighlight_language_selector.SpanishTranslateOnHighlight_selected_language:hover {
     /* language selector div, when selected and hovered over */
-    background-color: #ededed;
+    background-color: #bababa;
 }
 
 .SpanishTranslateOnHighlight_lang_content {
