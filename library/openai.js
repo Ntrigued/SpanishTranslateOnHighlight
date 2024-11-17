@@ -53,8 +53,8 @@ const PROMPTS = {
 
     TRANSLATE_SPANISH_MULTI: "Respond with just a list of translations and nothing else. Ex.: [this is the first translation§ this is another translation§ this also is a translation]\nWhat are the possible translations of all of the following Spanish content (treat punctuation marks as part of the translation, they are not separators):\n\n",
 
-    TRANSLATE_IN_CONTEXT_A: "Respond with just the translation from Spanish into English and nothing else UNDER ANY CIRCUMSTANCES.\nWhat is the translation of the following Spanish content:",
-    TRANSLATE_IN_CONTEXT_B: "\nwhich is taken from this text:",
+    TRANSLATE_IN_CONTEXT_A: "Respond with just the translation of the phrase from Spanish into English and nothing else UNDER ANY CIRCUMSTANCES.\nWhat is the translation of the following Spanish phrase:",
+    TRANSLATE_IN_CONTEXT_B: "\nwhich is taken from this text (but this is only for context, only translate the phrase):",
     TRANSLATE_IN_CONTEXT_C:"\n\n\n(part of the translation, they are not separators)"
 };
 
@@ -149,13 +149,21 @@ export class OpenAI {
 
     async translate_phrase_in_context(phrase_text, full_text) {
         phrase_text = phrase_text.trim();
+        full_text = full_text.trim();
         if(phrase_text == '') {
             return "";
         }
+        let added_quotations = false;
+        if(!phrase_text.includes('"') && !full_text.includes('"')) {
+            phrase_text = '"' + phrase_text + '"';
+            full_text = '"' + full_text + '"';
+            added_quotations = true;
+        }
 
-        const translated_phrase = await this.send_prompt(PROMPTS.TRANSLATE_IN_CONTEXT_A + " " + phrase_text +
+        let translated_phrase = await this.send_prompt(PROMPTS.TRANSLATE_IN_CONTEXT_A + " " + phrase_text +
                                                         PROMPTS.TRANSLATE_IN_CONTEXT_B + " " + full_text +
                                                         PROMPTS.TRANSLATE_IN_CONTEXT_C);
+        if(added_quotations) translated_phrase = translated_phrase.replaceAll('"', '');
         return translated_phrase;
     }
 
