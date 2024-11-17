@@ -27,7 +27,7 @@
 
         view.display_text("Loading translation...");
         dev_logger.clear();
-        const translation_info = await openai.translate_if_spanish(selected_text);
+        const translation_info = await openai.get_translation_info(selected_text);
         // Don't display translation info if it doesn't exist or the modal has been removed since sending requests
         if (translation_info !== null && document.getElementById("SpanishTranslateOnHighlight_outer_translation_div")) {
             dev_logger.info("displaying translation info");

@@ -1,3 +1,6 @@
+import * as dev_logger from "./dev_logger.js";
+
+
 function display_content(html_elements) {
     remove_modal();
 
@@ -31,8 +34,10 @@ export function remove_modal() {
 }
 
 export function display_translation_info(translation_info, openai) {
-    const spanish_phrases = translation_info['phrases']
-    const english_translation = translation_info['translations'][0]
+    dev_logger.debug("view.py translation_info: ", translation_info);
+    const spanish_text = translation_info['spanish_text'];
+    const spanish_phrases = translation_info['phrases'];
+    const english_translation = translation_info['translation'];
 
     const lang_selector_div = document.createElement('div');
     lang_selector_div.id = "SpanishTranslateOnHighlight_lang_selector_div";
@@ -47,6 +52,7 @@ export function display_translation_info(translation_info, openai) {
     spanish_selector.classList.add("SpanishTranslateOnHighlight_language_selector");
     spanish_selector.appendChild( document.createTextNode('Spanish') );
     english_selector.onclick = () => {
+        dev_logger.info("Showing English tab based on English selector click");
         if(english_selector) {
             english_selector.classList.add('SpanishTranslateOnHighlight_selected_language');
         }
@@ -57,6 +63,7 @@ export function display_translation_info(translation_info, openai) {
         document.getElementById("SpanishTranslateOnHighlight_spanish_translation_info").style.display = "none";
     };
     spanish_selector.onclick = () => { 
+        dev_logger.info("Showing Spanish tab based on Spanish selector click");
         if(spanish_selector) {
             spanish_selector.classList.add('SpanishTranslateOnHighlight_selected_language');
         }
@@ -97,7 +104,7 @@ export function display_translation_info(translation_info, openai) {
                 phrase_span.innerText = "...";
                 if(!phrase_span.hasAttribute("english_text")) {
                     // await translation
-                    openai.translate_phrase(phrase).then((english_text) => {
+                    openai.translate_phrase_in_context(phrase, spanish_text).then((english_text) => {
                         phrase_span.innerText = english_text;
                         phrase_span.setAttribute('english_text', english_text);
                         phrase_span.style.pointerEvents = "";
