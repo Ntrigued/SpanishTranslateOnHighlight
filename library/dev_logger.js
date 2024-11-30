@@ -1,4 +1,4 @@
-const DEVELOPMENT_MODE = true;
+const DEVELOPMENT_MODE = false;
 
 export const clear = () => DEVELOPMENT_MODE && console.clear();
 export const debug = (...args) => DEVELOPMENT_MODE && console.debug(...args);
