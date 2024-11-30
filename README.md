@@ -1,6 +1,6 @@
 # Web Extension for easy Spanish-to-English Translation
 
-_this extension requires an OpenAI API Key **and will cost you money.**_ I've attempted to optimize the prompts and model choice to minimize the cost, but there is **absolutely no maximum expense that this extension can cost you.** You should always have a maximum spending limit set on the API key which you are using with this extension.
+_This extension requires an OpenAI API Key **and will cost you money.**_ I've attempted to optimize the prompts and model choice to minimize the cost, but there is **absolutely no maximum expense that this extension can cost you.** You should always have a maximum spending limit set on the API key which you are using with this extension.
 
 I built this as an aid while learning Spanish. It gives translation info when a Spanish phrase is highlighted, powered by OpenAI's GPT-4o Mini model. After setting an OpenAI API key, simply highlight Spanish text and a pop-up will display both the full English translation and a per-phrase translation.
 
@@ -14,6 +14,9 @@ I built this as an aid while learning Spanish. It gives translation info when a 
 
 
 ## You can also tab over to view a phrase-by-phrase translation!
+Click on the individually-highlighted phrases to see phrase-level translations of the text.
 ![Screenshot 2024-11-29 212649](https://github.com/user-attachments/assets/dbf477ea-d837-423e-8613-a837f940e66c)
 
 
+
+_Spanish text used in screenshots is from a public domain story on [Project Gutenberg](https://www.gutenberg.org/): https://www.gutenberg.org/cache/epub/36805/pg36805.txt_
