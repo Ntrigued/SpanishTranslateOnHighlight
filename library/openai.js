@@ -13,7 +13,7 @@ async function get_valid_key() {
         OPENAI_API_KEY = prompt("Enter OPENAI API KEY to enable translation: ");
     }
     while(! await verify_key_works(OPENAI_API_KEY)) {
-        dev_logger.warn("Provised OpenAI API key failed verification, prompting again...");
+        dev_logger.warn("Provided OpenAI API key failed verification, prompting again...");
         OPENAI_API_KEY = prompt("Key failed to authenticate. Enter OPENAI API KEY to enable translation: ");            
     }
     dev_logger.info("OPENAI API KEY passed verification");

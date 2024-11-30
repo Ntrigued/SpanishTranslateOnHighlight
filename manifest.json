@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "spanish-highlight-to-translate",
   "version": "1.0",
-  "description": "Gives translation info when a Spanish phrase is highlighted",
+  "description": "Gives translation info when a Spanish phrase is highlighted, powered by OpenAI's GPT-4o Mini model. After setting an OpenAI API key, simply highlight Spanish text and a pop-up will display both the full English translation and a per-phrase translation.",
   "permissions": [
       "storage"
   ],
