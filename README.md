@@ -5,7 +5,7 @@ _This extension requires an OpenAI API Key **and will cost you money.**_ I've at
 I built this as an aid while learning Spanish. It gives translation info when a Spanish phrase is highlighted, powered by OpenAI's GPT-4o Mini model. After setting an OpenAI API key, simply highlight Spanish text and a pop-up will display both the full English translation and a per-phrase translation. Please note that it is only meant to be used with a mouse and will not work on mobile.
 
 
-##Simply provide an OpenAI API Key...
+## Simply provide an OpenAI API Key...
 ![image](https://github.com/user-attachments/assets/008688f2-d2b7-4091-aa1c-fafbe835bd45)
 
 
