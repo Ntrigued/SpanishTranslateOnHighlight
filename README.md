@@ -2,7 +2,7 @@
 
 _This extension requires an OpenAI API Key **and will cost you money.**_ I've attempted to optimize the prompts and model choice to minimize the cost, but there is **absolutely no maximum expense that this extension can cost you.** You should always have a maximum spending limit set on the API key which you are using with this extension.
 
-I built this as an aid while learning Spanish. It gives translation info when a Spanish phrase is highlighted, powered by OpenAI's GPT-4o Mini model. After setting an OpenAI API key, simply highlight Spanish text and a pop-up will display both the full English translation and a per-phrase translation.
+I built this as an aid while learning Spanish. It gives translation info when a Spanish phrase is highlighted, powered by OpenAI's GPT-4o Mini model. After setting an OpenAI API key, simply highlight Spanish text and a pop-up will display both the full English translation and a per-phrase translation. Please note that it is only meant to be used with a mouse and will not work on mobile.
 
 
 ##Simply provide an OpenAI API Key...
